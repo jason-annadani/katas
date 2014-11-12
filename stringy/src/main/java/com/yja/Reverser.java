@@ -16,12 +16,9 @@ public class Reverser
 		if (null == s) {
 			return null;
 		}
-		int length = s.length();
-		char[] copy = new char[length];
-		for (char c : s.toCharArray()) {
-			copy[--length] = c;
-		}
-		return new String(copy);
+		if (s.length() < 1)
+			return s;
+		return reverse(s.substring(1)) + s.charAt(0);
 	}
 
 }
