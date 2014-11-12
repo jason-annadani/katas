@@ -16,15 +16,6 @@ public class Reverser
 		if (null == s) {
 			return null;
 		}
-		if (s.length() < 1)
-			return s;
-		return reverse(s.substring(1)) + s.charAt(0);
-	}
-
-	public String reverseIter(String s) {
-		if (null == s) {
-			return null;
-		}
 		int length = s.length();
 		char[] copy = new char[length];
 		for (char c : s.toCharArray()) {
@@ -32,4 +23,5 @@ public class Reverser
 		}
 		return new String(copy);
 	}
+
 }
