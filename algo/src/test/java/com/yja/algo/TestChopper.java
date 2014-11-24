@@ -51,8 +51,13 @@ public class TestChopper {
 	}
 
 	@Test
-	public void shouldChop() {
+	public void shouldRecursivelyChop() {
 		assertThat(Chopper.chop(toFind, toSearch), is(equalTo(expectedResult)));
 	}
 
+	@Test
+	public void shouldIterativelyChop() {
+		assertThat(Chopper.iterativeChop(toFind, toSearch), is(equalTo(expectedResult)));
+	}
+	
 }
