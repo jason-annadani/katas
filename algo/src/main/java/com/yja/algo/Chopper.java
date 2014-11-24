@@ -1,6 +1,14 @@
 package com.yja.algo;
 
 public class Chopper {
+	class Result {
+		public Result(IndexPair next) {
+			this.next = next;
+			
+		}
+		IndexPair next;
+		Integer result;
+	}
 
 	static int NOT_FOUND = -1;
 	private int[] toSearch;
@@ -27,18 +35,26 @@ public class Chopper {
 			if (indices.fromIndex == indices.toIndex)
 				return toSearch[indices.fromIndex] == toFind ? indices.toIndex : NOT_FOUND;
 
-			int midPoint = (indices.fromIndex + indices.toIndex) / 2;
-			if (toSearch[midPoint] == toFind)
-				return midPoint;
-
-			if (toSearch[midPoint] > toFind) {
-				indices.toIndex= midPoint;
-			}
-			else {
-				indices.fromIndex = midPoint + 1;
-			}
+			Result result = calculateResult(indices);
+			if (result.result != null)
+				return result.result;
 		} while (indices.fromIndex <= indices.toIndex);
 		return NOT_FOUND;
+	}
+
+	private Result calculateResult(IndexPair indices) {
+		Result result = new Result(indices);
+		int midPoint = (indices.fromIndex + indices.toIndex) / 2;
+		if (toSearch[midPoint] == toFind)
+			result.result = midPoint;
+
+		if (toSearch[midPoint] > toFind) {
+			indices.toIndex= midPoint;
+		}
+		else {
+			indices.fromIndex = midPoint + 1;
+		}
+		return result;
 	}
 
 	private int recursiveChop(IndexPair indices) {
@@ -47,13 +63,9 @@ public class Chopper {
 		if (indices.fromIndex == indices.toIndex)
 			return toSearch[indices.toIndex] == toFind ? indices.toIndex : NOT_FOUND;
 
-		int midPoint = (indices.fromIndex + indices.toIndex) / 2;
-		if (toSearch[midPoint] == toFind)
-			return midPoint;
-		if (toSearch[midPoint] > toFind)
-			indices.toIndex= midPoint;
-		else
-			indices.fromIndex = midPoint + 1;
+		Result result = calculateResult(indices);
+		if (result.result != null)
+			return result.result;
 		return recursiveChop(indices);
 
 	}
