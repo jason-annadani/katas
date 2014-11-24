@@ -12,8 +12,7 @@ public class Chopper {
 	}
 
 	public static int chop(int toFind, int[] toSearch) {
-		return new Chopper(toSearch, toFind).recursiveChop(0,
-				toSearch.length - 1);
+		return new Chopper(toSearch, toFind).recursiveChop(new IndexPair(0, toSearch.length - 1));
 	}
 
 	public static int iterativeChop(int toFind, int[] toSearch) {
@@ -21,39 +20,42 @@ public class Chopper {
 	}
 
 	private int iterativeChop() {
-		int fIndex = 0, tIndex = toSearch.length -1, midPoint;
+		IndexPair indices = new IndexPair(0, toSearch.length-1);
 		do {
-			if (fIndex > tIndex)
+			if (indices.fromIndex> indices.toIndex)
 				return NOT_FOUND;
-			if (fIndex == tIndex)
-				return toSearch[tIndex] == toFind ? tIndex : NOT_FOUND;
+			if (indices.fromIndex == indices.toIndex)
+				return toSearch[indices.fromIndex] == toFind ? indices.toIndex : NOT_FOUND;
 
-			midPoint = (fIndex + tIndex) / 2;
+			int midPoint = (indices.fromIndex + indices.toIndex) / 2;
 			if (toSearch[midPoint] == toFind)
 				return midPoint;
+
 			if (toSearch[midPoint] > toFind) {
-				tIndex = midPoint;
+				indices.toIndex= midPoint;
 			}
 			else {
-				fIndex = midPoint + 1;
+				indices.fromIndex = midPoint + 1;
 			}
-		} while (fIndex <= tIndex);
+		} while (indices.fromIndex <= indices.toIndex);
 		return NOT_FOUND;
 	}
 
-	private int recursiveChop(int fromIndex, int toIndex) {
-		if (fromIndex > toIndex)
+	private int recursiveChop(IndexPair indices) {
+		if (indices.fromIndex > indices.toIndex)
 			return NOT_FOUND;
-		if (fromIndex == toIndex)
-			return toSearch[toIndex] == toFind ? toIndex : NOT_FOUND;
+		if (indices.fromIndex == indices.toIndex)
+			return toSearch[indices.toIndex] == toFind ? indices.toIndex : NOT_FOUND;
 
-		int midPoint = (fromIndex + toIndex) / 2;
+		int midPoint = (indices.fromIndex + indices.toIndex) / 2;
 		if (toSearch[midPoint] == toFind)
 			return midPoint;
 		if (toSearch[midPoint] > toFind)
-			return recursiveChop(fromIndex, midPoint);
+			indices.toIndex= midPoint;
 		else
-			return recursiveChop(midPoint + 1, toIndex);
+			indices.fromIndex = midPoint + 1;
+		return recursiveChop(indices);
+
 	}
 
 }
