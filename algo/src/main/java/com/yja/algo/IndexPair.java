@@ -12,4 +12,8 @@ public class IndexPair {
 	int getMidPoint() {
 		return (fromIndex + toIndex) / 2;
 	}
+
+	boolean outOfBounds() {
+		return fromIndex > toIndex;
+	}
 }

@@ -2,6 +2,8 @@ package com.yja.algo;
 
 public class Chopper {
 	static int NOT_FOUND = -1;
+	static IndexPair STOP = null;
+	
 	private int[] toSearch;
 	private int toFind;
 
@@ -19,40 +21,30 @@ public class Chopper {
 	}
 
 	private int iterativeChop() {
-		boolean stop = false;
 		int result;
 		IndexPair indices = new IndexPair(0, toSearch.length-1);
 		do {
-			if (cannotFind(indices)) {
-				stop = true;
-				result = NOT_FOUND;
-			} else {
-				result = findAtMidPoint(indices);
-			}
+			if (indices.outOfBounds())
+				return NOT_FOUND;
+			if (notThereWithNothingLeftToBisect(indices))
+				return NOT_FOUND;		
+			result = findAtMidPoint(indices);
 			if (result != NOT_FOUND)
-				stop = true;
-			if (!stop) {
-				 indices = getNextIndices(indices); 
-			}
-		} while (!stop);
-		return result;
+				return result;
+			indices = getNextIndices(indices); 
+		} while (true);
 	}
 
 	private int recursiveChop(IndexPair indices) {
-		boolean stop = false;
-		int result;
-		if (cannotFind(indices)) {
-			stop = true;
-			result = NOT_FOUND;
-		} else {
-			result = findAtMidPoint(indices);
-		}
+		if (indices.outOfBounds())
+			return NOT_FOUND;
+		if (notThereWithNothingLeftToBisect(indices))
+			return NOT_FOUND;		
+		int result = findAtMidPoint(indices);
 		if (result != NOT_FOUND)
-			stop = true;
-		if (!stop) {
-			IndexPair next = getNextIndices(indices); 
-			result = recursiveChop(next);
-		}
+			return result;
+		IndexPair next = getNextIndices(indices); 
+		result = recursiveChop(next);
 		return result;
 	}
 	
@@ -69,16 +61,17 @@ public class Chopper {
 	}
 
 	private int findAtMidPoint(IndexPair indices) {
+		if (indices.outOfBounds())
+			return NOT_FOUND;		
 		int midPoint = indices.getMidPoint();
 		if (toSearch[midPoint] == toFind)
 			return midPoint;
 		return NOT_FOUND;
 	}
 
-	private boolean cannotFind(IndexPair indices) {
-		return indices.fromIndex > indices.toIndex 
-				|| (indices.fromIndex == indices.toIndex 
-				&& toSearch[indices.fromIndex] != toFind );
+	private boolean notThereWithNothingLeftToBisect(IndexPair indices) {
+		return indices.fromIndex == indices.toIndex 
+				&& toSearch[indices.fromIndex] != toFind;
 	}
 
 }
