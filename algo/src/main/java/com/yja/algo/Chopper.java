@@ -1,15 +1,6 @@
 package com.yja.algo;
 
 public class Chopper {
-	class Result {
-		public Result(IndexPair next) {
-			this.next = next;
-			
-		}
-		IndexPair next;
-		Integer result;
-	}
-
 	static int NOT_FOUND = -1;
 	private int[] toSearch;
 	private int toFind;
@@ -28,32 +19,22 @@ public class Chopper {
 	}
 
 	private int iterativeChop() {
+		boolean stop = false;
+		int result;
 		IndexPair indices = new IndexPair(0, toSearch.length-1);
 		do {
-			if (indices.fromIndex> indices.toIndex)
-				return NOT_FOUND;
-			if (indices.fromIndex == indices.toIndex)
-				return toSearch[indices.fromIndex] == toFind ? indices.toIndex : NOT_FOUND;
-
-			Result result = calculateResult(indices);
-			if (result.result != null)
-				return result.result;
-		} while (indices.fromIndex <= indices.toIndex);
-		return NOT_FOUND;
-	}
-
-	private Result calculateResult(IndexPair indices) {
-		Result result = new Result(indices);
-		int midPoint = (indices.fromIndex + indices.toIndex) / 2;
-		if (toSearch[midPoint] == toFind)
-			result.result = midPoint;
-
-		if (toSearch[midPoint] > toFind) {
-			indices.toIndex= midPoint;
-		}
-		else {
-			indices.fromIndex = midPoint + 1;
-		}
+			if (cannotFind(indices)) {
+				stop = true;
+				result = NOT_FOUND;
+			} else {
+				result = findAtMidPoint(indices);
+			}
+			if (result != NOT_FOUND)
+				stop = true;
+			if (!stop) {
+				 indices = getNextIndices(indices); 
+			}
+		} while (!stop);
 		return result;
 	}
 
@@ -77,7 +58,7 @@ public class Chopper {
 	
 	private IndexPair getNextIndices(IndexPair indices) {
 		IndexPair next = new IndexPair(indices.fromIndex, indices.toIndex);
-		int midPoint = (next.fromIndex + next.toIndex) / 2;
+		int midPoint = next.getMidPoint();
 		if (toSearch[midPoint] > toFind) {
 			next.toIndex= midPoint;
 		}
@@ -88,7 +69,7 @@ public class Chopper {
 	}
 
 	private int findAtMidPoint(IndexPair indices) {
-		int midPoint = (indices.fromIndex + indices.toIndex) / 2;
+		int midPoint = indices.getMidPoint();
 		if (toSearch[midPoint] == toFind)
 			return midPoint;
 		return NOT_FOUND;

@@ -8,4 +8,8 @@ public class IndexPair {
 		this.fromIndex = fromIndex;
 		this.toIndex = toIndex;
 	}
+
+	int getMidPoint() {
+		return (fromIndex + toIndex) / 2;
+	}
 }
