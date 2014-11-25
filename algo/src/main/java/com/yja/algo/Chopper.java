@@ -58,16 +58,46 @@ public class Chopper {
 	}
 
 	private int recursiveChop(IndexPair indices) {
-		if (indices.fromIndex > indices.toIndex)
-			return NOT_FOUND;
-		if (indices.fromIndex == indices.toIndex)
-			return toSearch[indices.toIndex] == toFind ? indices.toIndex : NOT_FOUND;
+		boolean stop = false;
+		int result;
+		if (cannotFind(indices)) {
+			stop = true;
+			result = NOT_FOUND;
+		} else {
+			result = findAtMidPoint(indices);
+		}
+		if (result != NOT_FOUND)
+			stop = true;
+		if (!stop) {
+			IndexPair next = getNextIndices(indices); 
+			result = recursiveChop(next);
+		}
+		return result;
+	}
+	
+	private IndexPair getNextIndices(IndexPair indices) {
+		IndexPair next = new IndexPair(indices.fromIndex, indices.toIndex);
+		int midPoint = (next.fromIndex + next.toIndex) / 2;
+		if (toSearch[midPoint] > toFind) {
+			next.toIndex= midPoint;
+		}
+		else {
+			next.fromIndex = midPoint + 1;
+		}
+		return next;
+	}
 
-		Result result = calculateResult(indices);
-		if (result.result != null)
-			return result.result;
-		return recursiveChop(indices);
+	private int findAtMidPoint(IndexPair indices) {
+		int midPoint = (indices.fromIndex + indices.toIndex) / 2;
+		if (toSearch[midPoint] == toFind)
+			return midPoint;
+		return NOT_FOUND;
+	}
 
+	private boolean cannotFind(IndexPair indices) {
+		return indices.fromIndex > indices.toIndex 
+				|| (indices.fromIndex == indices.toIndex 
+				&& toSearch[indices.fromIndex] != toFind );
 	}
 
 }
