@@ -27,7 +27,6 @@ public class TestBinaryTree {
 
 	@Test
 	public void calculatesHeight() {
-//		assertThat(underTest.height(), equalTo(-1));
 		underTest.add(5);
 		assertThat(underTest.height(), equalTo(0));
 		underTest.add(1);
@@ -41,13 +40,9 @@ public class TestBinaryTree {
 
 class BinaryTree<T> {
 	private T value;
-	private BinaryTree<T> left;
-	private BinaryTree<T> right;
+	private BinaryTree<T> left = NullBinaryTree.NULL_TREE; 
+	private BinaryTree<T> right = NullBinaryTree.NULL_TREE;
 	
-	public BinaryTree(T value) {
-		add(value);
-	}
-
 	public BinaryTree() {
 	}
 
@@ -57,11 +52,13 @@ class BinaryTree<T> {
 			return;
 		}
 		if (noLeft()) {
-			left = new BinaryTree<T>(value);
+			left = new BinaryTree<T>();
+			left.add(value);
 			return;
 		}
 		if (noRight()) {
-			right = new BinaryTree<T>(value);
+			right = new BinaryTree<T>();
+			right.add(value);
 			return;
 		}
 		left.add(element);
@@ -72,24 +69,43 @@ class BinaryTree<T> {
 	}
 
 	private boolean noRight() {
-		return null == right;
+		return right == NullBinaryTree.NULL_TREE;
 	}
 
 	private boolean noLeft() {
-		return null == left;
+		return left == NullBinaryTree.NULL_TREE;
 	}
 
 	public int size() {
 		if (noValue())
 			return 0;
-		return 1 + (noLeft() ? 0 : left.size()) + (noRight() ? 0 : right.size());
+		return 1 + left.size() + right.size();
 	}
 
 	public int height() {
 		if (noLeft() && noRight() || noValue()) 
 			return 0;
-		int leftHeight = noLeft() ? 0 : left.height();
-		int rightHeight = noRight() ? 0 : right.height();
-		return 1 + Math.max(leftHeight, rightHeight);
+		return 1 + Math.max(left.height(), right.height());
 	}
+}
+
+class NullBinaryTree<T> extends BinaryTree<T> {
+	static NullBinaryTree NULL_TREE = new NullBinaryTree();
+	
+	@Override
+	public void add(T element) {
+		return;
+	}
+
+	@Override
+	public int size() {
+		return 0;
+	}
+
+	@Override
+	public int height() {
+		return 0;
+	}
+	
+	
 }
