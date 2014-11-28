@@ -5,9 +5,9 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
-public class TestBinaryTree {
+public class TestBinarySearchTree {
 	private static final Integer SENTINEL = 42;
-	private BinaryTree<Integer> underTest = new BinaryTree<>();  
+	private BinaryTree<Integer> underTest = new BinarySearchTree<>();  
 	
 	@Test
 	public void adds() {
@@ -26,72 +26,85 @@ public class TestBinaryTree {
 	}	
 
 	@Test
+	public void shouldNotAddDuplicate() {
+		underTest.add(5);
+		underTest.add(5);
+		assertThat(underTest.size(), equalTo(1));
+	}	
+
+	@Test
 	public void calculatesHeight() {
 		underTest.add(5);
 		assertThat(underTest.height(), equalTo(0));
 		underTest.add(1);
 		assertThat(underTest.height(), equalTo(1));
-		underTest.add(7); // balanced
+		underTest.add(7); 
 		assertThat(underTest.height(), equalTo(1));
 		underTest.add(0); 
 		assertThat(underTest.height(), equalTo(2));
 	}	
+
+	@Test
+	public void isBinarySearchTree() {
+		underTest.add(5);
+		underTest.add(1);
+		assertThat(underTest.height(), equalTo(1));
+		underTest.add(3); 
+		assertThat(underTest.height(), equalTo(2));
+		underTest.add(4); 
+		assertThat(underTest.height(), equalTo(3));
+	}	
 }
 
-class BinaryTree<T> {
+class BinarySearchTree<T extends Comparable<T>> implements BinaryTree<T> {
 	private T value;
-	private BinaryTree<T> left = NullBinaryTree.NULL_TREE; 
-	private BinaryTree<T> right = NullBinaryTree.NULL_TREE;
+	private BinaryTree<T> left = new NullBinaryTree<>(); 
+	private BinaryTree<T> right = new NullBinaryTree<>();
 	
-	public BinaryTree() {
-	}
-
-	public void add(T element) {
-		if (noValue()) {
-			value = element;
+	@Override
+	public void add(T toAdd) {
+		if (!hasValue()) {
+			value = toAdd;
 			return;
 		}
-		if (noLeft()) {
-			left = new BinaryTree<T>();
-			left.add(value);
-			return;
+		if (value.compareTo(toAdd) > 0) {
+			if (!left.hasValue())
+				left = new BinarySearchTree<>();
+			left.add(toAdd);
+		} else if (value.compareTo(toAdd) < 0) {
+			if (!right.hasValue())
+				right = new BinarySearchTree<>();
+			right.add(toAdd);
 		}
-		if (noRight()) {
-			right = new BinaryTree<T>();
-			right.add(value);
-			return;
-		}
-		left.add(element);
+		// duplicate so ignore
 	}
 
-	private boolean noValue() {
-		return null == value;
-	}
-
-	private boolean noRight() {
-		return right == NullBinaryTree.NULL_TREE;
-	}
-
-	private boolean noLeft() {
-		return left == NullBinaryTree.NULL_TREE;
-	}
-
+	@Override
 	public int size() {
-		if (noValue())
+		if (!hasValue())
 			return 0;
 		return 1 + left.size() + right.size();
 	}
 
+	@Override
 	public int height() {
-		if (noLeft() && noRight() || noValue()) 
+		if (!left.hasValue() && !right.hasValue() || !hasValue()) 
 			return 0;
 		return 1 + Math.max(left.height(), right.height());
 	}
+	
+	@Override
+	public boolean hasValue() {
+		return value != null;
+	}
+
+	@Override
+	public T getValue() {
+		return value;
+	}
 }
 
-class NullBinaryTree<T> extends BinaryTree<T> {
-	static NullBinaryTree NULL_TREE = new NullBinaryTree();
-	
+class NullBinaryTree<T extends Comparable<T>> implements BinaryTree<T> {
 	@Override
 	public void add(T element) {
 		return;
@@ -107,5 +120,13 @@ class NullBinaryTree<T> extends BinaryTree<T> {
 		return 0;
 	}
 	
-	
+	@Override
+	public boolean hasValue() {
+		return false;
+	}
+
+	@Override
+	public T getValue() {
+		throw new UnsupportedOperationException();
+	}	
 }
