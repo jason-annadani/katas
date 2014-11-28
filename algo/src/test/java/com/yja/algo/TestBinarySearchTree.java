@@ -54,6 +54,20 @@ public class TestBinarySearchTree {
 		underTest.add(4); 
 		assertThat(underTest.height(), equalTo(3));
 	}	
+
+	@Test
+	public void shouldFind() {
+		assertThat(underTest.find(5), equalTo(false));
+		underTest.add(5);
+		assertThat(underTest.find(5), equalTo(true));
+		assertThat(underTest.find(1), equalTo(false));
+		underTest.add(1);
+		assertThat(underTest.find(1), equalTo(true));
+		underTest.add(3);
+		underTest.add(4);
+		underTest.add(7);
+		assertThat(underTest.find(7), equalTo(true));
+	}	
 }
 
 class BinarySearchTree<T extends Comparable<T>> implements BinaryTree<T> {
@@ -88,9 +102,13 @@ class BinarySearchTree<T extends Comparable<T>> implements BinaryTree<T> {
 
 	@Override
 	public int height() {
-		if (!left.hasValue() && !right.hasValue() || !hasValue()) 
+		if (noChildren() || !hasValue()) 
 			return 0;
 		return 1 + Math.max(left.height(), right.height());
+	}
+
+	private boolean noChildren() {
+		return !left.hasValue() && !right.hasValue();
 	}
 	
 	@Override
@@ -101,6 +119,12 @@ class BinarySearchTree<T extends Comparable<T>> implements BinaryTree<T> {
 	@Override
 	public T getValue() {
 		return value;
+	}
+
+	@Override
+	public boolean find(T toFind) {
+		// brute force
+		return toFind.equals(value) || left.find(toFind) || right.find(toFind);
 	}
 }
 
@@ -128,5 +152,10 @@ class NullBinaryTree<T extends Comparable<T>> implements BinaryTree<T> {
 	@Override
 	public T getValue() {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean find(T toFind) {
+		return false;
 	}	
 }
