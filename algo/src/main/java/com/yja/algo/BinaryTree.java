@@ -1,5 +1,7 @@
 package com.yja.algo;
 
+import java.util.List;
+
 interface BinaryTree<T extends Comparable<T>> {
 
 	public void add(T toAdd);
@@ -13,5 +15,7 @@ interface BinaryTree<T extends Comparable<T>> {
 	public T getValue();
 	
 	public boolean find(T toFind);
+
+	public List<T> valuesInOrder();
 
 }

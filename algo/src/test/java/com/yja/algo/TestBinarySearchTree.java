@@ -1,9 +1,15 @@
 package com.yja.algo;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
+
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Test;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 public class TestBinarySearchTree {
 	private static final Integer SENTINEL = 42;
@@ -57,17 +63,28 @@ public class TestBinarySearchTree {
 
 	@Test
 	public void shouldFind() {
-//		assertThat(underTest.find(5), equalTo(false));
+		assertThat(underTest.find(5), equalTo(false));
 		underTest.add(5);
-//		assertThat(underTest.find(5), equalTo(true));
-//		assertThat(underTest.find(1), equalTo(false));
+		assertThat(underTest.find(5), equalTo(true));
+		assertThat(underTest.find(1), equalTo(false));
 		underTest.add(1);
-//		assertThat(underTest.find(1), equalTo(true));
+		assertThat(underTest.find(1), equalTo(true));
 		underTest.add(3);
 		underTest.add(4);
 		underTest.add(7);
 		assertThat(underTest.find(7), equalTo(true));
-	}	
+	}
+	
+	@Test
+	public void shouldTraverseInOrder() {
+		underTest.add(5);
+		underTest.add(1);
+		underTest.add(3);
+		underTest.add(4);
+		underTest.add(7);
+		assertThat(underTest.valuesInOrder(), equalTo(Arrays.asList(1, 3, 4, 5, 7)));
+		
+	}
 }
 
 class BinarySearchTree<T extends Comparable<T>> implements BinaryTree<T> {
@@ -132,6 +149,15 @@ class BinarySearchTree<T extends Comparable<T>> implements BinaryTree<T> {
 			return left.find(toFind);
 		return right.find(toFind);
 	}
+
+	@Override
+	public List<T> valuesInOrder() {
+		List<T> values = ImmutableList.<T>builder()
+													.addAll(left.valuesInOrder())
+													.add(value)
+													.addAll(right.valuesInOrder()).build();
+		return values;		
+	}
 }
 
 class NullBinaryTree<T extends Comparable<T>> implements BinaryTree<T> {
@@ -163,5 +189,10 @@ class NullBinaryTree<T extends Comparable<T>> implements BinaryTree<T> {
 	@Override
 	public boolean find(T toFind) {
 		return false;
+	}
+
+	@Override
+	public List<T> valuesInOrder() {
+		return Lists.newArrayList();
 	}	
 }
