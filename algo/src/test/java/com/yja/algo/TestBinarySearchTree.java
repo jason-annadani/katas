@@ -2,11 +2,19 @@ package com.yja.algo;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import org.junit.Test;
+import org.mockito.InOrder;
+import org.mockito.Mockito;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -76,7 +84,7 @@ public class TestBinarySearchTree {
 	}
 	
 	@Test
-	public void shouldTraverseInOrder() {
+	public void shouldGetValuesInOrder() {
 		underTest.add(5);
 		underTest.add(1);
 		underTest.add(3);
@@ -84,6 +92,27 @@ public class TestBinarySearchTree {
 		underTest.add(7);
 		assertThat(underTest.valuesInOrder(), equalTo(Arrays.asList(1, 3, 4, 5, 7)));
 		
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void shouldTraverseInOrder() {
+		underTest.add(5);
+		underTest.add(1);
+		underTest.add(3);
+		underTest.add(4);
+		underTest.add(7);
+		Consumer<Integer> action = mock(Consumer.class);
+		
+		underTest.inOrder(action);
+		
+		InOrder inOrder = inOrder(action); 
+		inOrder.verify(action).accept(1);
+		inOrder.verify(action).accept(3);
+		inOrder.verify(action).accept(4);
+		inOrder.verify(action).accept(5);
+		inOrder.verify(action).accept(7);
+		verifyNoMoreInteractions(action);		
 	}
 }
 
@@ -158,6 +187,13 @@ class BinarySearchTree<T extends Comparable<T>> implements BinaryTree<T> {
 													.addAll(right.valuesInOrder()).build();
 		return values;		
 	}
+
+	@Override
+	public void inOrder(Consumer<T> action) {
+		left.inOrder(action);
+		action.accept(value);
+		right.inOrder(action);
+	}
 }
 
 class NullBinaryTree<T extends Comparable<T>> implements BinaryTree<T> {
@@ -194,5 +230,10 @@ class NullBinaryTree<T extends Comparable<T>> implements BinaryTree<T> {
 	@Override
 	public List<T> valuesInOrder() {
 		return Lists.newArrayList();
+	}
+
+	@Override
+	public void inOrder(Consumer<T> action) {
+		
 	}	
 }
