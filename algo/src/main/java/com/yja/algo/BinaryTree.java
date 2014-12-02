@@ -17,8 +17,6 @@ interface BinaryTree<T extends Comparable<T>> {
 	
 	public boolean find(T toFind);
 
-	public List<T> valuesInOrder();
-
 	public void inOrder(Consumer<T> action);
 
 }
