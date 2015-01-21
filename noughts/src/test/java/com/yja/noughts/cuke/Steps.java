@@ -16,6 +16,7 @@ public class Steps {
 	    // For automatic transformation, change DataTable to one of
 	    // List<YourType>, List<List<E>>, List<Map<K,V>> or Map<K,V>.
 	    // E,K,V must be a scalar (String, Integer, Date, enum etc)
-	    System.out.println(table.toString());;
+	    System.out.println(table.toString());
+//	    throw new Error("SNAFU");
 	}
 }
